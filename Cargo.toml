@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "paper-quota-applet",
+    "logout-applet",
+]
+resolver = "2"
