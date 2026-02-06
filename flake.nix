@@ -16,7 +16,12 @@
         runtimeLibs = with pkgs; [ libGL libxkbcommon wayland vulkan-loader ];
 
         commonArgs = {
-          src = craneLib.cleanCargoSource ./.;
+          src = pkgs.lib.cleanSourceWith {
+            src = ./.;
+            filter = path: type:
+              (craneLib.filterCargoSources path type) ||
+              (builtins.match ".*\.desktop$" path != null);
+          }; 
           strictDeps = true;
           nativeBuildInputs = with pkgs; [ pkg-config copyDesktopItems ];
           buildInputs = runtimeLibs;
