@@ -10,6 +10,7 @@ const ID: &str = "io.ocf.logout-applet";
 #[derive(Default)]
 pub struct Window {
     core: Core,
+    panel_text: String,
 }
 
 #[derive(Clone, Debug)]
@@ -32,8 +33,15 @@ impl cosmic::Application for Window {
     }
 
     fn init(core: Core, _flags: Self::Flags) -> (Self, Task<Action<Self::Message>>) {
+        let username = std::process::Command::new("whoami")
+            .output()
+            .ok()
+            .map(|x| String::from_utf8_lossy(&x.stdout).trim().to_string())
+            .unwrap_or("unknown".to_string());
+
         let window = Window {
             core,
+            panel_text: format!("Log out as {}", username),
             ..Default::default()
         };
 
@@ -55,7 +63,7 @@ impl cosmic::Application for Window {
     fn view(&self) -> Element<'_, Message> {
         let content = Element::from(
             row!(
-                self.core.applet.text("Log Out"),
+                self.core.applet.text(&self.panel_text),
                 container(vertical_space().height(Length::Fixed(
                     (self.core.applet.suggested_size(true).1
                         + 2 * self.core.applet.suggested_padding(true).1)
