@@ -2,12 +2,25 @@
   description = "OCF COSMIC Applets";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    crane.url = "github:ipetkov/crane";
+    ocf-nix = {
+      type = "github";
+      owner = "ocf";
+      repo = "nix";
+      ref = "main";
+    };
+    nixpkgs.follows = "ocf-nix/nixpkgs";
+
+    flake-utils = {
+      type = "github";
+      owner = "numtide";
+      repo = "flake-utils";
+      ref = "main";
+    };
+
+    crane.follows = "ocf-nix/wayout/crane";
   };
 
-  outputs = { self, nixpkgs, flake-utils, crane }:
+  outputs = { self, ocf-nix, nixpkgs, flake-utils, crane }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
